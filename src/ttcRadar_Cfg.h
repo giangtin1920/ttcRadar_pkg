@@ -15,7 +15,7 @@
 #include <math.h>
 using namespace std;
 
-#define CFG_LOOP_RATE 10 
+#define CFG_LOOP_RATE 50
 
 #define ser_Cfg_Port_Name "/dev/ttyUSB0"
 #define ser_Data_Port_Name "/dev/ttyUSB1"

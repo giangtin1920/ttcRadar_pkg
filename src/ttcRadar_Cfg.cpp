@@ -75,136 +75,6 @@ void ttcRAdarObj::send_cfg(std::string msg)
     loop_rate1.sleep();
 }
 
-// void ttcRAdarObj::start_radargoc(void)
-// {
-//     std::string msg;
-
-//     msg = "sensorStop";
-//     send_cfg(msg);
-
-//     msg = "flushCfg";
-//     send_cfg(msg);
-
-//     msg = "dfeDataOutputMode 1";
-//     send_cfg(msg);
-
-//     msg = "channelCfg 15 7 0";
-//     send_cfg(msg);
-
-//     msg = "adcCfg 2 1";
-//     send_cfg(msg);
-
-//     msg = "adcbufCfg -1 0 1 1 1";
-//     send_cfg(msg);
-
-//     msg = "profileCfg 0 60 20 20 50 0 0 50 1 256 6000 0 0 30";
-//     send_cfg(msg);
-
-//     msg = "chirpCfg 0 0 0 0 0 0 0 1";
-//     send_cfg(msg);
-
-//     msg = "chirpCfg 1 1 0 0 0 0 0 4";
-//     send_cfg(msg);
-
-//     msg = "chirpCfg 2 2 0 0 0 0 0 2";
-//     send_cfg(msg);
-
-//     // 100 is 100ms delay between 2 output frame
-//     msg = "frameCfg 0 1 128 0 100 1 0";
-//     send_cfg(msg);
-
-//     msg = "lowPower 0 0";
-//     send_cfg(msg);
-
-//     msg = "guiMonitor -1 1 1 0 0 0 0";
-//     send_cfg(msg);
-
-//     //Threshold scale [0..100]
-//     msg = "cfarCfg -1 0 2 8 4 3 0 15 1";
-//     send_cfg(msg);
-//     msg = "cfarCfg -1 1 0 8 4 4 1 15 1";
-//     send_cfg(msg);
-
-//     msg = "multiObjBeamForming -1 1 0.5";
-//     send_cfg(msg);
-
-//     msg = "clutterRemoval -1 0";
-//     send_cfg(msg);
-
-//     msg = "calibDcRangeSig -1 0 -5 8 256";
-//     send_cfg(msg);
-
-//     msg = "extendedMaxVelocity -1 0";
-//     send_cfg(msg);
-
-//     msg = "bpmCfg -1 0 0 1";
-//     send_cfg(msg);
-
-//     msg = "lvdsStreamCfg  -1 0 0 0";
-//     send_cfg(msg);
-
-//     msg = "compRangeBiasAndRxChanPhase 0.0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0";
-//     send_cfg(msg);
-
-//     msg = "measureRangeBiasAndRxChanPhase 0 1. 0.2";
-//     send_cfg(msg);
-
-//     msg = "CQRxSatMonitor 0 3 4 19 0";
-//     send_cfg(msg);
-
-//     msg = "CQSigImgMonitor 0 31 4";
-//     send_cfg(msg);
-
-//     msg = "analogMonitor 0 0";
-//     send_cfg(msg);
-
-//     // View config (degrees) : [ -1 <minAzimuthDeg> <maxAzimuthDeg> <minElevationDeg> <maxElevationDeg> ]
-//     msg = "aoaFovCfg -1 -30 30 -10 10";
-//     send_cfg(msg);
-
-//     // Config point filtering in range direction (meter)
-//     msg = "cfarFovCfg -1 0 0.25 20.0";
-//     send_cfg(msg);
-
-//     // Config point filtering in Doppler direction (meter/sec)
-//     msg = "cfarFovCfg -1 1 -30 30";
-//     send_cfg(msg);
-
-//     // msg = "calibData 0 0 0";
-//     // send_cfg(msg);
-
-//     // *****************TRACKING COMMANDS*****************************
-//     msg = "staticBoundaryBox -3 3 0 20.0 -1 2";
-//     send_cfg(msg);
-
-//     msg = "boundaryBox -3 3 0 20.0 -1 2";
-//     send_cfg(msg);
-
-//     msg = "gatingParam 4 2 2 2 30";
-//     send_cfg(msg);
-
-//     msg = "stateParam 10 10 10 50 1";
-//     send_cfg(msg);
-
-//     msg = "allocationParam 50 35 0.2 6 2 5";
-//     send_cfg(msg);
-
-//     msg = "maxAcceleration 0.1 0.1 0.1";
-//     send_cfg(msg);
-
-//     msg = "trackingCfg 1 2 250 20 50 50 100 90";
-//     send_cfg(msg);
-
-//     // *****************STATIC DETECTION COMMANDS*********************
-//     msg = "heatmapGenCfg -1 0  0 40 130 60.0 3.0 10";
-//     send_cfg(msg);
-
-//     msg = "staticDetectionCfg -1 0 -50.0 +50.0 -20.0 20.0 0.7 6.0 0.2 4 20.0";
-//     send_cfg(msg);
-
-//     msg = "sensorStart";
-//     send_cfg(msg);
-// }
 void ttcRAdarObj::start_radar(void)
 {
     std::string msg;
@@ -227,7 +97,7 @@ void ttcRAdarObj::start_radar(void)
     msg = "adcbufCfg -1 0 1 1 1";
     send_cfg(msg);
 
-    msg = "profileCfg 0 60 50 25 80 0 0 50 1 256 6000 0 0 30";
+    msg = "profileCfg 0 60 100 25 69 0 0 50 1 256 6000 0 0 30";
     send_cfg(msg);
 
     msg = "chirpCfg 0 0 0 0 0 0 0 1";
@@ -239,14 +109,14 @@ void ttcRAdarObj::start_radar(void)
     msg = "chirpCfg 2 2 0 0 0 0 0 2";
     send_cfg(msg);
 
-    // 100 is 100ms delay between 2 output frame
-    msg = "frameCfg 0 2 32 0 55 1 0";
+    // 55 is 55ms delay between 2 output frame
+    msg = "frameCfg 0 1 32 0 55 1 0";
     send_cfg(msg);
 
     msg = "lowPower 0 0";
     send_cfg(msg);
 
-    msg = "guiMonitor -1 1 1 0 0 0 0";
+    msg = "guiMonitor -1 1 0 0 0 0 0";
     send_cfg(msg);
 
     //Threshold scale [0..100]
@@ -289,40 +159,42 @@ void ttcRAdarObj::start_radar(void)
     send_cfg(msg);
 
     // View config (degrees) : [ -1 <minAzimuthDeg> <maxAzimuthDeg> <minElevationDeg> <maxElevationDeg> ]
-    msg = "aoaFovCfg -1 -30 30 -10 10";
+    msg = "aoaFovCfg -1 -40 40 -10 10";
     send_cfg(msg);
 
     // Config point filtering in range direction (meter)
-    msg = "cfarFovCfg -1 0 0.25 20.0";
+    msg = "cfarFovCfg -1 0 0 20.0";
     send_cfg(msg);
 
     // Config point filtering in Doppler direction (meter/sec)
-    msg = "cfarFovCfg -1 1 -30 30";
+    msg = "cfarFovCfg -1 1 -10 10";
     send_cfg(msg);
 
     // msg = "calibData 0 0 0";
     // send_cfg(msg);
 
     // *****************TRACKING COMMANDS*****************************
-    msg = "staticBoundaryBox -3 3 0 20.0 -1 2";
+    // https://dev.ti.com/tirex/explore/content/mmwave_industrial_toolbox_4_7_0/labs/people_counting/docs/3D_people_counting_tracker_layer_tuning_guide.pdf
+    
+    msg = "staticBoundaryBox -8 8 0 20 -1 1";
     send_cfg(msg);
 
-    msg = "boundaryBox -3 3 0 20.0 -1 2";
+    msg = "boundaryBox -8 8 0 20 -1 1";
     send_cfg(msg);
 
-    msg = "gatingParam 4 2 2 2 30";
+    msg = "gatingParam 3 2 2 2 20";
     send_cfg(msg);
 
-    msg = "stateParam 10 10 10 50 1";
+    msg = "stateParam 15 10 10 20 5";
     send_cfg(msg);
 
-    msg = "allocationParam 50 35 0.2 6 2 5";
+    msg = "allocationParam 200 150 0.05 10 0.3 10";
     send_cfg(msg);
 
-    msg = "maxAcceleration 0.1 0.1 0.1";
+    msg = "maxAcceleration 2 2 2";
     send_cfg(msg);
 
-    msg = "trackingCfg 1 2 250 20 50 260 100 90";
+    msg = "trackingCfg 1 2 250 20 100 50 55 90";
     send_cfg(msg);
 
     // *****************STATIC DETECTION COMMANDS*********************
@@ -735,6 +607,7 @@ bool ttcRAdarObj::data_handler( std_msgs::UInt8MultiArray raw_data, uint16_t dat
             {
                 case ENABLE_RADAR_TTC:
                 {
+                    
 
                 }
                 break;
