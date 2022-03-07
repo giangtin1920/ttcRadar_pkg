@@ -367,7 +367,7 @@ void ttcRAdarObj::getGtrackTargetList(void)
 
         for (auto i = 0; i < numDetectedObj; i++)
         {
-            ptTargets.tid.push_back(tlv.payload[0]*1 + tlv.payload[1]*256.0 + tlv.payload[2]*65536.0 + tlv.payload[3]*1.6777216E+7);
+            ptTargets.tid.push_back(tlv.payload[i * 40 + 0]*1 + tlv.payload[i * 40 + 1]*256.0 + tlv.payload[i * 40 + 2]*65536.0 + tlv.payload[i * 40 + 3]*1.6777216E+7);
             // ptTargets.tid.push_back(data.myFloat[i * 10 + 0]);
             ptTargets.posX.push_back(data.myFloat[i * 10 + 1]);
             ptTargets.posY.push_back(data.myFloat[i * 10 + 2]);
