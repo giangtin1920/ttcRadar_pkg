@@ -417,7 +417,7 @@ structTLV ttcRAdarObj::getTLV (uint8_t framePacket[], uint32_t numTLVs, uint32_t
             // getStaticObj == 8
             case MMWDEMO_UART_MSG_STATIC_DETECTED_POINTS :
 			{
-                getStaticObj();
+                // getStaticObj();
 			}
 			break;
 
