@@ -39,7 +39,11 @@ typedef struct
 {
   uint32_t msg_counter = 0;
   bool isObject = false;
-  float distance = 10.0f;
+  float distance = 20.0f;
+  uint16_t numTrackedObj = 0;
+  bool isApproach = false;
+  float veclocity = 0.0f;
+  float timeCollision = 20.0f;
 } Radar_Output_Struct;
 
 struct structHeader
@@ -75,7 +79,6 @@ struct structDetObj
     vector<float> x;
 	vector<float> y;
 	vector<float> z;
-
 };
 
 struct structStaticDetObj
@@ -137,6 +140,7 @@ class ttcRAdarObj
     void getStaticObj(void);
     void getGtrackTargetList(void);
     bool data_handler(std_msgs::UInt8MultiArray raw_data, uint16_t dataLen);
+    bool processingGtrackTarget(void);
     float processingPtMinDistance (structHeader frameHeader);
 
 

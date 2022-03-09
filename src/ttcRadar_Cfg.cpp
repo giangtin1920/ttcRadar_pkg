@@ -442,6 +442,38 @@ structTLV ttcRAdarObj::getTLV (uint8_t framePacket[], uint32_t numTLVs, uint32_t
     return tlv;
 }
 
+bool ttcRAdarObj::processingGtrackTarget(void)
+{
+    Output.numTrackedObj = ptTargets.tid.size();
+    for (auto i = 0; i < Output.numTrackedObj; i++)
+    {
+        Output.isObject = true;
+        Output.msg_counter++;
+        Output.distance = sqrt( pow(ptTargets.posX[i],2) + pow(ptTargets.posY[i],2) );
+        Output.veclocity = 0;
+
+    }
+
+
+                    // if (frameHeader.numDetectedObj)
+                    // {
+                    //     Output.isObject = true;
+                    //     Output.msg_counter++;
+                    //     Output.distance = ptMinDistance;
+                    //     ROS_INFO("distance ============= %f",ptMinDistance);
+                    // }
+                    // else
+                    // {
+                    //     Output.isObject = false;
+                    //     Output.distance = ptMinDistance;
+                    //     ROS_INFO("distance ============= %f", ptMinDistance);
+                    // }
+
+
+
+    return true;
+}
+
 float ttcRAdarObj::processingPtMinDistance (structHeader frameHeader)
 {
 
@@ -607,8 +639,7 @@ bool ttcRAdarObj::data_handler( std_msgs::UInt8MultiArray raw_data, uint16_t dat
             {
                 case ENABLE_RADAR_TTC:
                 {
-                    
-
+                    bool isTrackedObj = processingGtrackTarget();
                 }
                 break;
 

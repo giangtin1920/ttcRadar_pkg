@@ -1,9 +1,4 @@
-#include <ros/ros.h>
-#include <serial/serial.h>
-#include <std_msgs/String.h>
-#include <std_msgs/Empty.h>
 #include "ttcRadar_Cfg.h"
-#include "std_msgs/UInt8MultiArray.h"
 
 #define DataPort_EN
 
@@ -24,12 +19,30 @@ void timer_uart_Callback(const ros::TimerEvent& )
         // Process the raw_data
         if (true == ttcRadarObj.data_handler(raw_data, dataLen))
         {
-            // Send ros message
-            ttcRadar_output_msg.msg_counter = ttcRadarObj.Output.msg_counter;
-            ttcRadar_output_msg.isObject = ttcRadarObj.Output.isObject;
-            ttcRadar_output_msg.distance = ttcRadarObj.Output.distance;
-            ttcRadar_pub.publish(ttcRadar_output_msg);
-            ROS_INFO("Public message ok (TTC)");
+            switch (modeRadar)
+            {
+                case ENABLE_RADAR_TTC:
+                {
+
+                }
+                break;
+
+                case ENABLE_RADAR_MPC:
+                {
+                    // Send ros message
+                    ttcRadar_output_msg.msg_counter = ttcRadarObj.Output.msg_counter;
+                    ttcRadar_output_msg.isObject = ttcRadarObj.Output.isObject;
+                    ttcRadar_output_msg.distance = ttcRadarObj.Output.distance;
+                    ttcRadar_pub.publish(ttcRadar_output_msg);
+                    ROS_INFO("Public message ok (MPC)");
+
+                }
+                break;
+
+                default:
+                break;
+            }
+            
         }
     }
 }
