@@ -37,13 +37,13 @@ using namespace std;
 // Output of Radar
 typedef struct
 {
-  uint32_t msg_counter = 0;
-  bool isObject = false;
-  float distance = 20.0f;
-  uint16_t numTrackedObj = 0;
-  bool isApproach = false;
-  float veclocity = 0.0f;
-  float timeCollision = 20.0f;
+    vector <bool> isObject;
+    vector <bool> isApproach;
+    uint16_t numTrackedObj = 0;
+    uint32_t msg_counter = 0;
+    vector <float>  distance;
+    vector <float> velocity;
+    vector <float>  timeCollision; 
 } Radar_Output_Struct;
 
 struct structHeader

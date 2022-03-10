@@ -23,6 +23,15 @@ void timer_uart_Callback(const ros::TimerEvent& )
             {
                 case ENABLE_RADAR_TTC:
                 {
+                    for (auto i = 0; i < ttcRadarObj.Output.numTrackedObj; i++)
+                    {
+                    
+                        ttcRadar_output_msg.msg_counter = ttcRadarObj.Output.msg_counter;
+                        ttcRadar_output_msg.isObject = ttcRadarObj.Output.isObject[i];
+                        ttcRadar_output_msg.distance = ttcRadarObj.Output.distance[i];
+                        ttcRadar_pub.publish(ttcRadar_output_msg);
+                        ROS_INFO("Public message ok (TTC)");
+                    }
 
                 }
                 break;
@@ -31,8 +40,8 @@ void timer_uart_Callback(const ros::TimerEvent& )
                 {
                     // Send ros message
                     ttcRadar_output_msg.msg_counter = ttcRadarObj.Output.msg_counter;
-                    ttcRadar_output_msg.isObject = ttcRadarObj.Output.isObject;
-                    ttcRadar_output_msg.distance = ttcRadarObj.Output.distance;
+                    ttcRadar_output_msg.isObject = ttcRadarObj.Output.isObject[0];
+                    ttcRadar_output_msg.distance = ttcRadarObj.Output.distance[0];
                     ttcRadar_pub.publish(ttcRadar_output_msg);
                     ROS_INFO("Public message ok (MPC)");
 

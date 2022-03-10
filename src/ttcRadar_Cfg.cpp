@@ -299,6 +299,12 @@ void ttcRAdarObj::clearPtCloud(void)
     ptTargets.velZ.clear();
     ptTargets.accZ.clear();
 
+    Output.isObject.clear();
+    Output.isApproach.clear();
+    Output.distance.clear();
+    Output.timeCollision.clear();
+    Output.velocity.clear();
+
 }
 
 void ttcRAdarObj::getDetObj(void)
@@ -447,29 +453,30 @@ bool ttcRAdarObj::processingGtrackTarget(void)
     Output.numTrackedObj = ptTargets.tid.size();
     for (auto i = 0; i < Output.numTrackedObj; i++)
     {
-        Output.isObject = true;
+        Output.isObject.push_back(true);
         Output.msg_counter++;
-        Output.distance = sqrt( pow(ptTargets.posX[i],2) + pow(ptTargets.posY[i],2) );
-        Output.veclocity = 0;
+        Output.distance.push_back( pow(ptTargets.posX[i],2) + pow(ptTargets.posY[i],2) );
+        float alpha = acos(ptTargets.posX[i] / Output.distance[i]);
+        Output.velocity.push_back( ptTargets.velX[i]*cos(alpha) + ptTargets.velY[i]*cos(M_PI_2 - alpha) );
+        float gamma = acos(-Output.velocity[i]/sqrt( pow(ptTargets.velX[i],2) + pow(ptTargets.velY[i],2)));
+        float ttcPosX = 5.0f;
+        if (gamma >= 0 && gamma < M_PI_2)
+        {
+            ttcPosX = ptTargets.posX[i] - (ptTargets.velX[i]*ptTargets.posY[i])/ptTargets.velY[i];
+        }
+
+        if (ttcPosX > -2 && ttcPosX < 2)
+        {
+            Output.isApproach.push_back(true);
+        }
+        else
+        {
+            Output.isApproach.push_back(false);
+        }
+
+        ROS_INFO("distance ============= %f",Output.distance[i]);
 
     }
-
-
-                    // if (frameHeader.numDetectedObj)
-                    // {
-                    //     Output.isObject = true;
-                    //     Output.msg_counter++;
-                    //     Output.distance = ptMinDistance;
-                    //     ROS_INFO("distance ============= %f",ptMinDistance);
-                    // }
-                    // else
-                    // {
-                    //     Output.isObject = false;
-                    //     Output.distance = ptMinDistance;
-                    //     ROS_INFO("distance ============= %f", ptMinDistance);
-                    // }
-
-
 
     return true;
 }
@@ -650,15 +657,15 @@ bool ttcRAdarObj::data_handler( std_msgs::UInt8MultiArray raw_data, uint16_t dat
                     // update output
                     if (frameHeader.numDetectedObj)
                     {
-                        Output.isObject = true;
+                        Output.isObject.push_back(true);
                         Output.msg_counter++;
-                        Output.distance = ptMinDistance;
+                        Output.distance.push_back(ptMinDistance);
                         ROS_INFO("distance ============= %f",ptMinDistance);
                     }
                     else
                     {
-                        Output.isObject = false;
-                        Output.distance = ptMinDistance;
+                        Output.isObject.push_back(false);
+                        Output.distance.push_back(ptMinDistance);
                         ROS_INFO("distance ============= %f", ptMinDistance);
                     }
 
@@ -672,7 +679,7 @@ bool ttcRAdarObj::data_handler( std_msgs::UInt8MultiArray raw_data, uint16_t dat
         else
         {
             // is_data_ok = false;
-            Output.isObject = false;
+            Output.isObject.push_back(false);
             ROS_INFO("distance ============= %f", Output.distance);
         }
         
