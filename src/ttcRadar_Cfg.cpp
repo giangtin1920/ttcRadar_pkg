@@ -450,6 +450,9 @@ structTLV ttcRAdarObj::getTLV (uint8_t framePacket[], uint32_t numTLVs, uint32_t
 
 bool ttcRAdarObj::processingGtrackTarget(void)
 {
+    ROS_INFO("Im Gtracl");
+
+
     Output.numTrackedObj = ptTargets.tid.size();
     for (auto i = 0; i < Output.numTrackedObj; i++)
     {
@@ -474,7 +477,11 @@ bool ttcRAdarObj::processingGtrackTarget(void)
             Output.isApproach.push_back(false);
         }
 
+        ROS_INFO("ID Object: %u ", ptTargets.tid[i]);
         ROS_INFO("distance ============= %f",Output.distance[i]);
+        ROS_INFO("is Approach: %d", Output.isApproach[i]);
+        ROS_INFO("velocity:: %f m/s", Output.velocity[i]);
+
 
     }
 

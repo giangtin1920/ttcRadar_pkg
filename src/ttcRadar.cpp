@@ -25,7 +25,6 @@ void timer_uart_Callback(const ros::TimerEvent& )
                 {
                     for (auto i = 0; i < ttcRadarObj.Output.numTrackedObj; i++)
                     {
-                    
                         ttcRadar_output_msg.msg_counter = ttcRadarObj.Output.msg_counter;
                         ttcRadar_output_msg.isObject = ttcRadarObj.Output.isObject[i];
                         ttcRadar_output_msg.distance = ttcRadarObj.Output.distance[i];

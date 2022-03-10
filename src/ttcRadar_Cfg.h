@@ -21,7 +21,7 @@ using namespace std;
 #define ser_Data_Port_Name "/dev/ttyUSB1"
 
 // switch(modeRadar) case ENABLE_RADAR_TTC: ...
-#define modeRadar           0
+#define modeRadar           1
 #define ENABLE_RADAR_TTC    1
 #define ENABLE_RADAR_MPC    0
 
