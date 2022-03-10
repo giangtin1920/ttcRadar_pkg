@@ -41,7 +41,7 @@ typedef struct
     vector <bool> isApproach;
     uint16_t numTrackedObj = 0;
     uint32_t msg_counter = 0;
-    vector <float>  distance;
+    vector <float>  distance = {20.0};
     vector <float> velocity;
     vector <float>  timeCollision; 
 } Radar_Output_Struct;

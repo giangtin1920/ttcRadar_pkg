@@ -6,7 +6,7 @@ ttcRadar_pkg::ttcRadar_msg ttcRadar_output_msg;
 
 void chatterCallback (const ttcRadar_pkg::ttcRadar_msg& ttcRadar_output_msg)
 {
-    ROS_INFO("I heard: [%f]", ttcRadar_output_msg.distance);
+    ROS_INFO("I heard: distance = [%f]", ttcRadar_output_msg.distance);
 }
 
 int main(int argc, char **argv)
