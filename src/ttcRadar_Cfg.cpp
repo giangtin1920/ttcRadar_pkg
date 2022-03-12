@@ -259,10 +259,10 @@ structHeader ttcRAdarObj::getFrameHeader (uint8_t framePacket[], uint16_t dataLe
  	}
 	frameHeader.idX = idX;
 
-    ROS_INFO("totalPacketLen: %u", frameHeader.totalPacketLen);
-    ROS_INFO("frameNumber: %u", frameHeader.frameNumber);
-    ROS_INFO("numDetectedObj: %u", frameHeader.numDetectedObj);
-    ROS_INFO("numTLVs: %u", frameHeader.numTLVs);
+    // ROS_INFO("totalPacketLen: %u", frameHeader.totalPacketLen);
+    // ROS_INFO("frameNumber: %u", frameHeader.frameNumber);
+    // ROS_INFO("numDetectedObj: %u", frameHeader.numDetectedObj);
+    // ROS_INFO("numTLVs: %u \r\n", frameHeader.numTLVs);
     // for(auto i=0; i<300; i++)
     // {
     //     ROS_INFO("frame %d: %u", i, framePacket[i]);
@@ -312,6 +312,7 @@ void ttcRAdarObj::getDetObj(void)
 
     if (numDetectedObj)
     {
+        
         // Convert 4byte to float
         for (auto i = 0; i < tlv.length; i++)
         {
@@ -328,7 +329,6 @@ void ttcRAdarObj::getDetObj(void)
             ptDetObj.z.push_back(   data.myFloat[i * 4]             *   sin(data.myFloat[i * 4 + 2])                        );
             ptDetObj.y.push_back(   cos(data.myFloat[i * 4 + 2])    *   cos(data.myFloat[i * 4 + 2]) * data.myFloat[i * 4]  );
             ptDetObj.x.push_back(   sin(data.myFloat[i * 4 + 2])    *   cos(data.myFloat[i * 4 + 2]) * data.myFloat[i * 4]  );
-
         }
     }
 }
@@ -390,11 +390,11 @@ void ttcRAdarObj::getGtrackTargetList(void)
             ptTargets.velZ.push_back(data.myFloat[i * 10 + 8]);
             ptTargets.accZ.push_back(data.myFloat[i * 10 + 9]);
 
-            ROS_INFO("ID Object = %u ", ptTargets.tid[i]);
-            ROS_INFO("posX = %f ", ptTargets.posX[i]);
-            ROS_INFO("posY = %f ", ptTargets.posY[i]);
-            ROS_INFO("velX = %f ", ptTargets.velX[i]);
-            ROS_INFO("velY = %f ", ptTargets.velY[i]);
+            // ROS_INFO("ID Object = %u ", ptTargets.tid[i]);
+            // ROS_INFO("posX = %f ", ptTargets.posX[i]);
+            // ROS_INFO("posY = %f ", ptTargets.posY[i]);
+            // ROS_INFO("velX = %f ", ptTargets.velX[i]);
+            // ROS_INFO("velY = %f ", ptTargets.velY[i]);
 
         }
         
@@ -423,8 +423,8 @@ structTLV ttcRAdarObj::getTLV (uint8_t framePacket[], uint32_t numTLVs, uint32_t
 			}
 		idX += tlv.length;
         tlv.idX = idX;
-        ROS_INFO("type: %u  --------", tlv.type);
-        ROS_INFO("len: %u  ", tlv.length);
+        // ROS_INFO("type: %u  --------", tlv.type);
+        // ROS_INFO("len: %u  ", tlv.length);
 
 		switch (tlv.type)
 		{
@@ -475,12 +475,13 @@ bool ttcRAdarObj::processingGtrackTarget(void)
         float alpha = acos(ptTargets.posX[i] / Output.distance[i]);
         Output.velocity.push_back( ptTargets.velX[i]*cos(alpha) + ptTargets.velY[i]*cos(M_PI_2 - alpha) );
         float gamma = acos(-Output.velocity[i]/sqrt( pow(ptTargets.velX[i],2) + pow(ptTargets.velY[i],2)));
+
         float ttcPosX = 5.0f;
         if (gamma >= 0 && gamma < M_PI_2)
         {
             ttcPosX = ptTargets.posX[i] - (ptTargets.velX[i]*ptTargets.posY[i])/ptTargets.velY[i];
         }
-
+ 
         if (ttcPosX > -2 && ttcPosX < 2)
         {
             Output.isApproach.push_back(true);
@@ -490,11 +491,12 @@ bool ttcRAdarObj::processingGtrackTarget(void)
             Output.isApproach.push_back(false);
         }
 
-        ROS_INFO("ID Object: %u ", ptTargets.tid[i]);
-        ROS_INFO("distance ============= %f",Output.distance[i]);
-        ROS_INFO("is Approach: %c", Output.isApproach[i]);
-        ROS_INFO("velocity:: %f m/s", Output.velocity[i]);
-
+        ROS_INFO("ID Track Object =============, %u ", ptTargets.tid[i]);
+        ROS_INFO("alpha:        deg,     %f", alpha*180/M_PI);
+        ROS_INFO("distance:     m,       %f", Output.distance[i]);
+        ROS_INFO("gamma:        deg,     %f", gamma*180/M_PI);
+        ROS_INFO("velocity::    m/s,     %f", Output.velocity[i]);
+        ROS_INFO("is Approach:  m,       %f", ttcPosX);
     }
 
     return true;
@@ -552,7 +554,7 @@ float ttcRAdarObj::processingPtMinDistance (structHeader frameHeader)
     }
     else
     {
-        ptMinDistance = 10.0;
+        ptMinDistance = 20.0;
     }
     ROS_INFO("outDisTmp = %f", ptMinDistance);
     
@@ -633,8 +635,8 @@ bool ttcRAdarObj::data_handler( std_msgs::UInt8MultiArray raw_data, uint16_t dat
 
         // Check that startIdx is not empty // framePacket has executed only 1 frame
         startIdx.push_back(dataLen);
-        ROS_INFO("startIdx 0 =  %u", startIdx[0]);
-        ROS_INFO("startIdx 1 =  %u", startIdx[1]);
+        // ROS_INFO("startIdx 0 =  %u", startIdx[0]);
+        // ROS_INFO("startIdx 1 =  %u", startIdx[1]);
 
         uint8_t framePacket[(startIdx[1] - startIdx[0])];
        

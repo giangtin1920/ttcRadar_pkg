@@ -14,7 +14,7 @@ void timer_uart_Callback(const ros::TimerEvent& )
         dataLen = ttcRadarObj.ser_Data_Port.available();
         std_msgs::UInt8MultiArray raw_data;
         ttcRadarObj.ser_Data_Port.read(raw_data.data, ttcRadarObj.ser_Data_Port.available());
-        ROS_INFO("Read: %u byte -----------------------------", dataLen);
+        ROS_INFO("Read: %u byte -----------------------------,", dataLen);
 
         // Process the raw_data
         if (true == ttcRadarObj.data_handler(raw_data, dataLen))
@@ -43,7 +43,7 @@ void timer_uart_Callback(const ros::TimerEvent& )
                     ttcRadar_output_msg.isObject = ttcRadarObj.Output.isObject[0];
                     ttcRadar_output_msg.distance = ttcRadarObj.Output.distance[0];
                     ttcRadar_pub.publish(ttcRadar_output_msg);
-                    ROS_INFO("Public message ok (MPC)");
+                    ROS_INFO("Public message ok (MPC) \r\n");
 
                 }
                 break;
