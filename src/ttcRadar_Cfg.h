@@ -21,7 +21,7 @@ using namespace std;
 #define ser_Data_Port_Name "/dev/ttyUSB1"
 
 // switch(modeRadar) case ENABLE_RADAR_TTC: ...
-#define modeRadar           1
+#define modeRadar           0
 #define ENABLE_RADAR_TTC    1
 #define ENABLE_RADAR_MPC    0
 
@@ -45,6 +45,12 @@ typedef struct
     vector <float> velocity;
     vector <float>  timeCollision; 
 } Radar_Output_Struct;
+
+struct structPacket
+{
+    vector<uint8_t> data;
+    uint16_t dataLen = 0;
+};
 
 struct structHeader
 {
@@ -147,9 +153,9 @@ class ttcRAdarObj
     private:
     void send_cfg(std::string msg);
     void clearPtCloud(void);
-    void posframeAvalable(std_msgs::UInt8MultiArray raw_data, vector<uint16_t> &startIdx, uint16_t dataLen);
-    structHeader getFrameHeader (uint8_t framePacket[], uint16_t dataLen);
-    structTLV getTLV (uint8_t framePacket[], uint32_t numTLVs, uint32_t idX);
+    structPacket getFramePacket(std_msgs::UInt8MultiArray raw_data, vector<uint16_t> &startIdx, uint16_t dataLen);
+    structHeader getFrameHeader (structPacket framePacket);
+    structTLV getTLV (structPacket framePacket, uint32_t numTLVs, uint32_t idX);
 
 };
 
