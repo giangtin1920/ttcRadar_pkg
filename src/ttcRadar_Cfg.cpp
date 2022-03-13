@@ -217,16 +217,16 @@ void ttcRAdarObj::stop_radar(void)
     send_cfg(msg);
 }
 
-structHeader ttcRAdarObj::getFrameHeader (uint8_t framePacket[], uint16_t dataLen)
+structHeader ttcRAdarObj::getFrameHeader (structPacket framePacket)
 {
 	structHeader frameHeader;
 
 	// check that all packet has been read
-    frameHeader.totalPacketLen = framePacket[12] + framePacket[13] * 256.0 + framePacket[14] * 65536.0 + framePacket[15] * 1.6777216E+7;
+    frameHeader.totalPacketLen = framePacket.data[12] + framePacket.data[13] * 256.0 + framePacket.data[14] * 65536.0 + framePacket.data[15] * 1.6777216E+7;
 	uint32_t idX = 0;
 
 	// read the header
-	if (frameHeader.totalPacketLen == dataLen) 
+	if (frameHeader.totalPacketLen == framePacket.dataLen) 
 	{
 		// word array to convert 4 bytes to a 32 bit number
         // word = [1, 2**8, 2**16, 2**24]
@@ -234,29 +234,29 @@ structHeader ttcRAdarObj::getFrameHeader (uint8_t framePacket[], uint16_t dataLe
         // Initialize the pointer index
         for (auto idX = 0; idX < 8; idX++)
 		{
-			frameHeader.magicWord[idX] = framePacket[idX];
+			frameHeader.magicWord[idX] = framePacket.data[idX];
 		}
 		idX += 8;
 		for (auto idX = 0; idX < 4; idX++)
 		{
-			frameHeader.version[idX] = framePacket[idX + 8];
+			frameHeader.version[idX] = framePacket.data[idX + 8];
 		}
 		idX += 4;
-        frameHeader.totalPacketLen = framePacket[idX]*1 + framePacket[idX + 1]*256.0 + framePacket[idX + 2]*65536.0 + framePacket[idX + 3]*1.6777216E+7;
+        frameHeader.totalPacketLen = framePacket.data[idX]*1 + framePacket.data[idX + 1]*256.0 + framePacket.data[idX + 2]*65536.0 + framePacket.data[idX + 3]*1.6777216E+7;
         idX += 4;
-        frameHeader.platform = framePacket[idX]*1 + framePacket[idX + 1]*256.0 + framePacket[idX + 2]*65536.0 + framePacket[idX + 3]*1.6777216E+7;
+        frameHeader.platform = framePacket.data[idX]*1 + framePacket.data[idX + 1]*256.0 + framePacket.data[idX + 2]*65536.0 + framePacket.data[idX + 3]*1.6777216E+7;
         idX += 4;
-        frameHeader.frameNumber = framePacket[idX]*1 + framePacket[idX + 1]*256.0 + framePacket[idX + 2]*65536.0 + framePacket[idX + 3]*1.6777216E+7;
+        frameHeader.frameNumber = framePacket.data[idX]*1 + framePacket.data[idX + 1]*256.0 + framePacket.data[idX + 2]*65536.0 + framePacket.data[idX + 3]*1.6777216E+7;
         idX += 4;
-        frameHeader.timeCpuCycles = framePacket[idX]*1 + framePacket[idX + 1]*256.0 + framePacket[idX + 2]*65536.0 + framePacket[idX + 3]*1.6777216E+7;
+        frameHeader.timeCpuCycles = framePacket.data[idX]*1 + framePacket.data[idX + 1]*256.0 + framePacket.data[idX + 2]*65536.0 + framePacket.data[idX + 3]*1.6777216E+7;
         idX += 4;
-        frameHeader.numDetectedObj = framePacket[idX]*1 + framePacket[idX + 1]*256.0 + framePacket[idX + 2]*65536.0 + framePacket[idX + 3]*1.6777216E+7;
+        frameHeader.numDetectedObj = framePacket.data[idX]*1 + framePacket.data[idX + 1]*256.0 + framePacket.data[idX + 2]*65536.0 + framePacket.data[idX + 3]*1.6777216E+7;
         idX += 4;
-        frameHeader.numTLVs = framePacket[idX]*1 + framePacket[idX + 1]*256.0 + framePacket[idX + 2]*65536.0 + framePacket[idX + 3]*1.6777216E+7;
+        frameHeader.numTLVs = framePacket.data[idX]*1 + framePacket.data[idX + 1]*256.0 + framePacket.data[idX + 2]*65536.0 + framePacket.data[idX + 3]*1.6777216E+7;
         idX += 4;
-		frameHeader.subFrameNumber = framePacket[idX]*1 + framePacket[idX + 1]*256.0 + framePacket[idX + 2]*65536.0 + framePacket[idX + 3]*1.6777216E+7;
+		frameHeader.subFrameNumber = framePacket.data[idX]*1 + framePacket.data[idX + 1]*256.0 + framePacket.data[idX + 2]*65536.0 + framePacket.data[idX + 3]*1.6777216E+7;
         idX += 4;
-        frameHeader.numStaticDetectedObj  = framePacket[idX]*1 + framePacket[idX + 1]*256.0 + framePacket[idX + 2]*65536.0 + framePacket[idX + 3]*1.6777216E+7;
+        frameHeader.numStaticDetectedObj  = framePacket.data[idX]*1 + framePacket.data[idX + 1]*256.0 + framePacket.data[idX + 2]*65536.0 + framePacket.data[idX + 3]*1.6777216E+7;
         idX += 4;
  	}
 	frameHeader.idX = idX;
@@ -267,7 +267,7 @@ structHeader ttcRAdarObj::getFrameHeader (uint8_t framePacket[], uint16_t dataLe
     // ROS_INFO("numTLVs: %u \r\n", frameHeader.numTLVs);
     // for(auto i=0; i<300; i++)
     // {
-    //     ROS_INFO("frame %d: %u", i, framePacket[i]);
+    //     ROS_INFO("frame %d: %u", i, framePacket.data[i]);
     // }
 
 	return frameHeader;
@@ -399,9 +399,8 @@ void ttcRAdarObj::getGtrackTargetList(void)
     }
 }
 
-structTLV ttcRAdarObj::getTLV (uint8_t framePacket[], uint32_t numTLVs, uint32_t idX)
+structTLV ttcRAdarObj::getTLV (structPacket framePacket, uint32_t numTLVs, uint32_t idX)
 {
-
     // clear all the elements of the vector container
     clearPtCloud();
 
@@ -411,13 +410,13 @@ structTLV ttcRAdarObj::getTLV (uint8_t framePacket[], uint32_t numTLVs, uint32_t
         tlv.payload.clear();
 
         // check the header of the TLV message
-		tlv.type = framePacket[idX]*1 + framePacket[idX + 1]*256.0 + framePacket[idX + 2]*65536.0 + framePacket[idX + 3]*1.6777216E+7;
+		tlv.type = framePacket.data[idX]*1 + framePacket.data[idX + 1]*256.0 + framePacket.data[idX + 2]*65536.0 + framePacket.data[idX + 3]*1.6777216E+7;
 		idX += 4;
-		tlv.length = framePacket[idX]*1 + framePacket[idX + 1]*256.0 + framePacket[idX + 2]*65536.0 + framePacket[idX + 3]*1.6777216E+7;
+		tlv.length = framePacket.data[idX]*1 + framePacket.data[idX + 1]*256.0 + framePacket.data[idX + 2]*65536.0 + framePacket.data[idX + 3]*1.6777216E+7;
 		idX += 4;
 		for (auto i = 0; i < tlv.length ; i++)
 			{
-				tlv.payload.push_back(framePacket[idX + i]);
+				tlv.payload.push_back(framePacket.data[idX + i]);
 			}
 		idX += tlv.length;
         tlv.idX = idX;
@@ -501,7 +500,6 @@ bool ttcRAdarObj::processingGtrackTarget(void)
 
 float ttcRAdarObj::processingPtMinDistance (structHeader frameHeader)
 {
-
     // sorting vector distance in increasing order
     sort(ptDetObj.y.begin(), ptDetObj.y.end());
 
@@ -601,10 +599,11 @@ float ttcRAdarObj::processingPtMinDistance (structHeader frameHeader)
     return ptMinDistance;
 }
 
-void ttcRAdarObj::posframeAvailable(std_msgs::UInt8MultiArray raw_data, vector<uint16_t> &startIdx, uint16_t dataLen)
+structPacket ttcRAdarObj::getFramePacket(std_msgs::UInt8MultiArray raw_data, vector<uint16_t> &startIdx, uint16_t dataLen)
 {
-    startIdx.clear();
+    structPacket framePacket;
 
+    startIdx.clear();
     // Magic word = {2,1,4,3,6,5,8,7}
     const int lenMagicWord = 7;
     
@@ -617,39 +616,42 @@ void ttcRAdarObj::posframeAvailable(std_msgs::UInt8MultiArray raw_data, vector<u
             startIdx.push_back(i);
         }
     }
+
+    // Check that startIdx is not empty // framePacket has executed only 1 frame
+    startIdx.push_back(dataLen);
+
+    //update dataLen
+    framePacket.dataLen = startIdx[1] - startIdx[0];
+    
+    // ROS_INFO("startIdx 0 =  %u", startIdx[0]);
+    // ROS_INFO("startIdx 1 =  %u", startIdx[1]);
+    
+    //Remove the data before the first start index
+    for (auto i = 0; i < (framePacket.dataLen); i++)
+    {
+        framePacket.data.push_back(raw_data.data[startIdx[0] + i]);
+    }
+
+    return framePacket;
 }
+
 
 bool ttcRAdarObj::data_handler( std_msgs::UInt8MultiArray raw_data, uint16_t dataLen)
 {
     bool is_data_ok = false;
 
     // Check for all possible locations of the magic word to startIdx
-    posframeAvailable(raw_data, startIdx, dataLen);
-    u_int16_t numframesAvailable = startIdx.size();
+    structPacket framePacket = getFramePacket(raw_data, startIdx, dataLen);
+    u_int16_t numframesAvailable = framePacket.dataLen;
 
     // Processing
     if (!numframesAvailable) return is_data_ok;
 
     is_data_ok = true;
 
-    // Check that startIdx is not empty // framePacket has executed only 1 frame
-    startIdx.push_back(dataLen);
-    // ROS_INFO("startIdx 0 =  %u", startIdx[0]);
-    // ROS_INFO("startIdx 1 =  %u", startIdx[1]);
-
-// viet hamf getframe
-    uint8_t framePacket[(startIdx[1] - startIdx[0])];
-    
-    //Remove the data before the first start index
-    for (auto i = 0; i < (startIdx[1] - startIdx[0]); i++)
-    {
-        framePacket[i] = raw_data.data[startIdx[0] + i];
-    }
-    //update dataLen
-    dataLen = startIdx[1] - startIdx[0];
 
     // Read the Header messages
-    structHeader frameHeader = getFrameHeader(framePacket, dataLen);
+    structHeader frameHeader = getFrameHeader(framePacket);
     uint32_t idX = frameHeader.idX;
 
     // Check is_data_ok
