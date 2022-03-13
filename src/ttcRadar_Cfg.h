@@ -21,7 +21,7 @@ using namespace std;
 #define ser_Data_Port_Name "/dev/ttyUSB1"
 
 // switch(modeRadar) case ENABLE_RADAR_TTC: ...
-#define modeRadar           1
+#define modeRadar           0
 #define ENABLE_RADAR_TTC    1
 #define ENABLE_RADAR_MPC    0
 
@@ -147,7 +147,7 @@ class ttcRAdarObj
     private:
     void send_cfg(std::string msg);
     void clearPtCloud(void);
-    void posframeAvalable(std_msgs::UInt8MultiArray raw_data, vector<uint16_t> &startIdx, uint16_t dataLen);
+    void posframeAvailable(std_msgs::UInt8MultiArray raw_data, vector<uint16_t> &startIdx, uint16_t dataLen);
     structHeader getFrameHeader (uint8_t framePacket[], uint16_t dataLen);
     structTLV getTLV (uint8_t framePacket[], uint32_t numTLVs, uint32_t idX);
 

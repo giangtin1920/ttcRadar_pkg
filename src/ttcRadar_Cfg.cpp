@@ -29,6 +29,7 @@ bool ttcRAdarObj::init_cfg_port(void)
     }
     if(ser_Cfg_Port.isOpen()){
         ROS_INFO_STREAM("Radar Config Port initialized");
+        return true;
     }else{
         return false;
     }
@@ -52,6 +53,7 @@ bool ttcRAdarObj::init_data_port(void)
     }
     if(ser_Data_Port.isOpen()){
         ROS_INFO_STREAM("Radar Data Port initialized");
+        return true;
     }else{
         return 1;
     }
@@ -363,7 +365,6 @@ void ttcRAdarObj::getGtrackTargetList(void)
     byte2float data = {0};
     data.myByte.clear();
 
-
     if (numDetectedObj)
     {
         // Convert 4byte to float
@@ -372,9 +373,7 @@ void ttcRAdarObj::getGtrackTargetList(void)
             data.myByte.push_back(tlv.payload[i]);
             // ROS_INFO("frame %d: %u", i, tlv.payload[i]);
         }
-
                     // ROS_INFO("kq %f", i, tlv.payload[i]);
-
 
         for (auto i = 0; i < numDetectedObj; i++)
         {
@@ -397,7 +396,6 @@ void ttcRAdarObj::getGtrackTargetList(void)
             // ROS_INFO("velY = %f ", ptTargets.velY[i]);
 
         }
-        
     }
 }
 
@@ -465,7 +463,6 @@ structTLV ttcRAdarObj::getTLV (uint8_t framePacket[], uint32_t numTLVs, uint32_t
 
 bool ttcRAdarObj::processingGtrackTarget(void)
 {
-
     Output.numTrackedObj = ptTargets.tid.size();
     for (auto i = 0; i < Output.numTrackedObj; i++)
     {
@@ -604,13 +601,16 @@ float ttcRAdarObj::processingPtMinDistance (structHeader frameHeader)
     return ptMinDistance;
 }
 
-void ttcRAdarObj::posframeAvalable(std_msgs::UInt8MultiArray raw_data, vector<uint16_t> &startIdx, uint16_t dataLen)
+void ttcRAdarObj::posframeAvailable(std_msgs::UInt8MultiArray raw_data, vector<uint16_t> &startIdx, uint16_t dataLen)
 {
     startIdx.clear();
 
-    // magic word = [2,1,4,3,6,5,8,7]
-    for (uint32_t i = 0; i < dataLen - 7; i++)
+    // Magic word = {2,1,4,3,6,5,8,7}
+    const int lenMagicWord = 7;
+    
+    for (uint32_t i = 0; i < dataLen - lenMagicWord; i++)
     {
+        // check start index of Magic word
         if (raw_data.data[i] == 2 && raw_data.data[i+1] == 1 && raw_data.data[i+2] == 4 && raw_data.data[i+3] == 3 
             && raw_data.data[i+4] == 6 && raw_data.data[i+5] == 5 && raw_data.data[i+6] == 8 && raw_data.data[i+7] == 7)
         {
@@ -624,84 +624,81 @@ bool ttcRAdarObj::data_handler( std_msgs::UInt8MultiArray raw_data, uint16_t dat
     bool is_data_ok = false;
 
     // Check for all possible locations of the magic word to startIdx
-    posframeAvalable(raw_data, startIdx, dataLen);
+    posframeAvailable(raw_data, startIdx, dataLen);
     u_int16_t numframesAvailable = startIdx.size();
 
     // Processing
-    if (numframesAvailable > 0)
+    if (!numframesAvailable) return is_data_ok;
+
+    is_data_ok = true;
+
+    // Check that startIdx is not empty // framePacket has executed only 1 frame
+    startIdx.push_back(dataLen);
+    // ROS_INFO("startIdx 0 =  %u", startIdx[0]);
+    // ROS_INFO("startIdx 1 =  %u", startIdx[1]);
+
+// viet hamf getframe
+    uint8_t framePacket[(startIdx[1] - startIdx[0])];
+    
+    //Remove the data before the first start index
+    for (auto i = 0; i < (startIdx[1] - startIdx[0]); i++)
     {
-
-        is_data_ok = true;
-
-        // Check that startIdx is not empty // framePacket has executed only 1 frame
-        startIdx.push_back(dataLen);
-        // ROS_INFO("startIdx 0 =  %u", startIdx[0]);
-        // ROS_INFO("startIdx 1 =  %u", startIdx[1]);
-
-        uint8_t framePacket[(startIdx[1] - startIdx[0])];
-       
-        //Remove the data before the first start index
-        for (auto i = 0; i < (startIdx[1] - startIdx[0]); i++)
-        {
-            framePacket[i] = raw_data.data[startIdx[0] + i];
-        }
-        //update dataLen
-        dataLen = startIdx[1] - startIdx[0];
-
-        // Read the Header messages
-        structHeader frameHeader = getFrameHeader(framePacket, dataLen);
-        uint32_t idX = frameHeader.idX;
-
-        // Check is_data_ok
-        if (frameHeader.numTLVs != 0)
-        {
-            // Read the TLV messages
-            structTLV tlv = getTLV(framePacket, frameHeader.numTLVs, idX);
-            idX = tlv.idX;
-
-            // processing output
-            switch (modeRadar)
-            {
-                case ENABLE_RADAR_TTC:
-                {
-                    bool isTrackedObj = processingGtrackTarget();
-                }
-                break;
-
-                case ENABLE_RADAR_MPC:
-                {
-
-                    float ptMinDistance = processingPtMinDistance(frameHeader);
-                    // update output
-                    if (frameHeader.numDetectedObj)
-                    {
-                        Output.isObject.push_back(true);
-                        Output.msg_counter++;
-                        Output.distance.push_back(ptMinDistance);
-                        ROS_INFO("distance ============= %f",ptMinDistance);
-                    }
-                    else
-                    {
-                        Output.isObject.push_back(false);
-                        Output.distance.push_back(ptMinDistance);
-                        ROS_INFO("distance ============= %f", ptMinDistance);
-                    }
-
-                }
-                break;
-
-                default:
-                break;
-            }
-        }
-        else
-        {
-            // is_data_ok = false;
-            Output.isObject.push_back(false);
-            ROS_INFO("distance ============= %f", Output.distance[0]);
-        }
-        
+        framePacket[i] = raw_data.data[startIdx[0] + i];
     }
+    //update dataLen
+    dataLen = startIdx[1] - startIdx[0];
 
+    // Read the Header messages
+    structHeader frameHeader = getFrameHeader(framePacket, dataLen);
+    uint32_t idX = frameHeader.idX;
+
+    // Check is_data_ok
+    if (frameHeader.numTLVs != 0)
+    {
+        // Read the TLV messages
+        structTLV tlv = getTLV(framePacket, frameHeader.numTLVs, idX);
+        idX = tlv.idX;
+
+        // processing output
+        switch (modeRadar)
+        {
+            case ENABLE_RADAR_TTC:
+            {
+                bool isTrackedObj = processingGtrackTarget();
+            }
+            break;
+
+            case ENABLE_RADAR_MPC:
+            {
+                float ptMinDistance = processingPtMinDistance(frameHeader);
+                // update output
+                if (frameHeader.numDetectedObj)
+                {
+                    Output.isObject.push_back(true);
+                    Output.msg_counter++;
+                    Output.distance.push_back(ptMinDistance);
+                    ROS_INFO("distance ============= %f",ptMinDistance);
+                }
+                else
+                {
+                    Output.isObject.push_back(false);
+                    Output.distance.push_back(ptMinDistance);
+                    ROS_INFO("distance ============= %f", ptMinDistance);
+                }
+
+            }
+            break;
+
+            default:
+            break;
+        }
+    }
+    else
+    {
+        // is_data_ok = false;
+        Output.isObject.push_back(false);
+        ROS_INFO("distance ============= %f", Output.distance[0]);
+    }
+    
     return is_data_ok;
 }
