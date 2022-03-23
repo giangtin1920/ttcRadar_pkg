@@ -128,3 +128,10 @@ As a node to read/parse/public to ROS framedata serial mmWave_AOP_MistralRadar(I
 ### Run node listener in another Terminal
 
     rosrun ttcRadar_pkg ttcListener
+    
+## Acknowledgments and References
+
+    https://www.geogebra.org/m/am7x4jx4
+    
+    https://boxy-svg.com/
+    
