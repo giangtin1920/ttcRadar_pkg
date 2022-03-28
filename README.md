@@ -129,9 +129,17 @@ As a node to read/parse/public to ROS framedata serial mmWave_AOP_MistralRadar(I
 
     rosrun ttcRadar_pkg ttcListener
     
+### Application GUI in QT_ROS
+
+https://github.com/giangtin1920/radarScanQT_ROS
+    
+### Simulation in Gazebo
+
+https://github.com/giangtin1920/AEV_simulation_ros_gazebo
+    
 ## Acknowledgments and References
 
-    https://www.geogebra.org/m/am7x4jx4
+https://www.geogebra.org/m/am7x4jx4
     
-    https://boxy-svg.com/
+https://boxy-svg.com/
     
